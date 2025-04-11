@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="head_of_page">User Dashboard</h2>
+<div class="container mt-5">
+    <ul class="list-group lgroup" >
+        <li class="list-group-item lgi" ><a href="{{ url_for('index') }}" class="user-link"><i class="bi bi-house-fill"></i> Home</a></li>
+        <li class="list-group-item lgi"><a href="{{ url_for('products') }}" class="user-link">All Products</a></li>
+        <li class="list-group-item lgi"><a href="{{ url_for('categories') }}" class="user-link">All Categories</a></li>
+        <li class="list-group-item lgi"><a href="{{ url_for('company') }}" class="user-link">Company</a></li>
+        <li class="list-group-item lgi"><a href="{{ url_for('order_details') }}" class="user-link">My Orders</a></li>
+        <li class="list-group-item lgi"><a href="{{ url_for('change_password') }}" class="user-link">Change Password</a></li>
+        <li class="list-group-item lgi"><a href="{{ url_for('logout') }}" class="user-link">Logout</a></li>
+    </ul>
+</div>
+
+
+{% endblock %}

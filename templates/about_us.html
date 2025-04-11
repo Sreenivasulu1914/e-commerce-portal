@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<h1 class="head_of_page"> <img src="{{ url_for('static', filename='images/info.png') }}" style="height: 50px;width: 60px;">&nbsp;About Us</h1>
+<div class="container" style="justify-content: center;">
+    <h4>Welcome to E-commerce</h4>
+    <p>At E-Commerce, we are passionate about providing you with the best online shopping experience. Our mission is to offer a wide variety of high-quality products at competitive prices, all while delivering exceptional customer service.</p>
+    <h4>Our Story</h4>
+    <p>Founded in [Year], [Your Company Name] started with a simple idea: to make shopping easier and more convenient for everyone. We began as a small business with a vision to create an online platform where customers could find everything they need in one place. Over the years, we have grown and expanded our product range, but our core values have remained the same.</p>
+    <h4>What We Offer</h4>
+    <ul>
+        <li><span style="font-size: large;">Diverse Product Range:</span> From fashion and electronics to home goods and beauty products, our extensive catalog ensures that you can find exactly what you’re looking for.</li>
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if edit %}
+        Edit Product
+    {% else %}
+        Add Product
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <h2 class="head_of_page">
+        {% if edit %}
+            Edit Product
+        {% else %}
+            Add Product
+        {% endif %}
+    </h2>
+    <!-- Add/Edit Product Form -->
+    <div class="container mt-5">
+        <form action="{% if edit %}{{ url_for('edit_product', product_id=product.product_id) }}{% else %}{{ url_for('add_product') }}{% endif %}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="product_name">Product Name</label>
+                <input type="text" class="form-control" id="product_name" name="product_name" value="{{ product.product_name if edit else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="company">Company</label>
+                <select class="form-control" id="company" name="company" required>
+                    {% for company in companies %}
+                    <option value="{{ company['brand_id'] }}" {% if edit and company['brand_id'] == product.company %}selected{% endif %}>{{ company['name'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="color">Color of Product</label>
+                <input type="text" class="form-control" id="color" name="color" value="{{ product.color if edit else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="product_type">Product Type</label>
+                <select class="form-control" id="product_type" name="product_type" required>
+                    {% for category in categories %}
+                    <option value="{{ category['category_id'] }}" {% if edit and category['category_id'] == product.product_type %}selected{% endif %}>{{ category['category_type'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group" id="size-group" style="display: none;">
+                <label for="size">Size of Product</label>
+                <input type="text" class="form-control" id="size" name="size" value="{{ product.size if edit else '' }}">
+            </div>
+            <div class="form-group">
+                <label for="cost">Cost</label>
+                <input type="number" class="form-control" id="cost" name="cost" value="{{ product.cost if edit else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="4" required>{{ product.description if edit else '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="image">Image</label>
+                <input type="file" class="form-control-file" id="image" name="image" {% if not edit %}required{% endif %}>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                {% if edit %}
+                    Update Product
+                {% else %}
+                    Add Product
+                {% endif %}
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const productTypeSelect = document.getElementById('product_type');
+            const sizeGroup = document.getElementById('size-group');
+
+            const toggleSizeField = () => {
+                const selectedProductType = productTypeSelect.options[productTypeSelect.selectedIndex].text;
+                if (selectedProductType === 'men wear' || selectedProductType === 'women wear') {
+                    sizeGroup.style.display = 'block';
+                } else {
+                    sizeGroup.style.display = 'none';
+                }
+            };
+
+            productTypeSelect.addEventListener('change', toggleSizeField);
+
+            // Initial check in case the form is in edit mode
+            toggleSizeField();
+        });
+    </script>
+{% endblock %}

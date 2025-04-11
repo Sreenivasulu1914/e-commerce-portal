@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Our Companies{% endblock %}
+
+{% block content %}
+    <h1 class="text-center mb-4 head_of_page">Our Companies</h1>
+    <!-- Company Information -->
+    <div class="container">
+        <div class="row cards" id="company-cards">
+            <!-- Company cards will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- JavaScript to fetch and display companies -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/companies')
+                .then(response => response.json())
+                .then(companies => {
+                    const companyCardsContainer = document.getElementById('company-cards');
+                    companies.forEach(company => {
+                        const companyCard = document.createElement('div');
+                        companyCard.className = 'col-md-3 mb-4';
+                        companyCard.innerHTML = `
+                            <div class="card card_position" style="height: 300px; ">
+                                <img src="/static/upload/${company.image}" class="card-img-top" alt="${company.brand_name}">
+                                <div class="card-body">
+                                    <h5 class="card-title">${company.name}</h5>
+                                    <p class="card-text">${company.description}</p>
+                                    <a href="/company/${company.brand_id}" class="btn btn-primary btn-view-product">View Products</a>
+                                </div>
+                            </div>
+                        `;
+                        companyCardsContainer.appendChild(companyCard);
+                    });
+                });
+        });
+    </script>
+{% endblock %}

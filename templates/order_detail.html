@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Order Details{% endblock %}
+
+{% block content %}
+<h2 class="head_of_page">Order Details</h2>
+<div class="container mt-5">
+    {% if orders %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="thead-dark hover">
+                <tr>
+                    <th>S.No</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Cost</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><img src="{{ url_for('static', filename='upload/' + order.image) }}" class="img-fluid" alt="{{ order.product_name }}" width="50"></td>
+                    <td>{{ order.product_name }}</td>
+                    <td>&#8377;{{ order.cost }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>&#8377;{{ order.cost * order.quantity }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        You don't have any orders.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

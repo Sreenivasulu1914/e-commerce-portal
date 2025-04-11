@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+    <h2 class="head_of_page"> <img src="{{ url_for('static', filename='images/quality-product.png') }}" style="height: 50px;width: 50px;">&nbsp;All products</h2>
+    <!-- Search Bar -->
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-md-12">
+                <form id="searchForm" class="form-inline">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchInput">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Products Section -->
+    <div class="container mt-5">
+        <div class="row" id="product-cards">
+            <!-- Product cards will be dynamically inserted here -->
+        </div>
+        <div id="no-products-message" class="alert alert-info" style="display: none;">
+            Products not found.
+        </div>
+    </div>
+
+    <!-- JavaScript to fetch and display products -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fetchProducts = (query = '') => {
+                fetch(`{{ url_for("api_products") }}?search=${query}`)
+                    .then(response => response.json())
+                    .then(products => {
+                        const productCardsContainer = document.getElementById('product-cards');
+                        const noProductsMessage = document.getElementById('no-products-message');
+                        productCardsContainer.innerHTML = ''; // Clear previous results
+
+                        if (products.length === 0) {
+                            noProductsMessage.style.display = 'block';
+                        } else {
+                            noProductsMessage.style.display = 'none';
+                            products.forEach(product => {
+                                const productCard = document.createElement('div');
+                                productCard.className = 'col-md-3 mb-4';
+                                productCard.innerHTML = `
+                                    <div class="card card_position">
+                                        <img src="{{ url_for('static', filename='upload/') }}${product.image}" class="card-img-top" alt="${product.product_name}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">${product.product_name}</h5>
+                                            <p class="card-text">${product.description}</p>
+                                            <a href="${window.location.origin}/view_product/${product.product_id}" class="btn btn-primary btn-view-product">View Product</a>
+                                        </div>
+                                    </div>
+                                `;
+                                productCardsContainer.appendChild(productCard);
+                            });
+                        }
+                    });
+            };
+
+            // Fetch all products on page load
+            fetchProducts();
+
+            // Handle search form submission
+            document.getElementById('searchForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const query = document.getElementById('searchInput').value;
+                fetchProducts(query);
+            });
+        });
+    </script>
+{% endblock %}

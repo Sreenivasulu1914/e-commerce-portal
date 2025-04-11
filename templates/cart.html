@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<h2 class="head_of_page">Shopping Cart</h2>
+<div class="container mt-5">
+    <div id="cart-container" class="table-responsive">
+        <table class="table table-striped" id="cart-table">
+            <thead id="cart-header" class="thead-dark">
+                <!-- Table header will be dynamically inserted here -->
+            </thead>
+            <tbody id="cart-items">
+                <!-- Cart items will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
+    <div id="no-items-message" class="alert alert-info" style="display: none;">
+        You don't have any cart items.
+    </div>
+    <div class="d-flex justify-content-between">
+        <h4>Total Amount: &#8377;<span id="total-amount">0</span></h4>
+        <button id="checkout-button" class="btn btn-success">Checkout</button>
+    </div>
+</div>
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to update cart count badge
+        function updateCartCount() {
+            fetch('/api/cart_count')
+                .then(response => response.json())
+                .then(data => {
+                    const cartCountElement = document.getElementById('cart-count');
+                    cartCountElement.textContent = data.count;
+                });
+        }
+
+        // Initial cart count update
+        updateCartCount();
+
+        // Fetch cart items and display them
+        fetch('/api/cart')
+            .then(response => response.json())
+            .then(cartItems => {
+                const cartHeaderContainer = document.getElementById('cart-header');
+                const cartItemsContainer = document.getElementById('cart-items');
+                const totalAmountElement = document.getElementById('total-amount');
+                const cartTable = document.getElementById('cart-table');
+                const noItemsMessage = document.getElementById('no-items-message');
+                let totalAmount = 0;
+
+                if (cartItems.length === 0) {
+                    cartTable.style.display = 'none';
+                    noItemsMessage.style.display = 'block';
+                } else {
+                    cartTable.style.display = 'table';
+                    noItemsMessage.style.display = 'none';
+
+                    // Create table header
+                    const cartHeaderRow = document.createElement('tr');
+                    cartHeaderRow.innerHTML = `
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Cost</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    `;
+                    cartHeaderContainer.appendChild(cartHeaderRow);
+
+                    // Create table rows for cart items
+                    cartItems.forEach(item => {
+                        const itemTotal = item.cost * item.quantity;
+                        totalAmount += itemTotal;
+
+                        const cartItemRow = document.createElement('tr');
+                        cartItemRow.innerHTML = `
+                            <td>${item.product_id}</td>
+                            <td><img src="/static/upload/${item.image}" class="img-fluid" alt="${item.product_name}" width="50"></td>
+                            <td>${item.product_name}</td>
+                            <td>&#8377;${item.cost}</td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm" onclick="updateQuantity(${item.product_id}, ${item.quantity - 1})">-</button>
+                                <span>${item.quantity}</span>
+                                <button class="btn btn-secondary btn-sm" onclick="updateQuantity(${item.product_id}, ${item.quantity + 1})">+</button>
+                            </td>
+                            <td>&#8377;${itemTotal}</td>
+                            <td><button class="btn btn-danger btn-sm" onclick="removeFromCart(${item.product_id})">Delete</button></td>
+                        `;
+                        cartItemsContainer.appendChild(cartItemRow);
+                    });
+
+                    totalAmountElement.textContent = totalAmount;
+                }
+            });
+
+        window.removeFromCart = function(productId) {
+            fetch(`/api/remove_from_cart/${productId}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        location.reload();
+                        updateCartCount();  // Update cart count after removing item
+                    } else {
+                        alert('Failed to remove item from cart');
+                    }
+                });
+        };
+
+        window.updateQuantity = function(productId, newQuantity) {
+            if (newQuantity < 1) {
+                alert('Quantity cannot be less than 1');
+                return;
+            }
+            fetch(`/api/update_cart_quantity/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ quantity: newQuantity })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    location.reload();
+                    updateCartCount();  // Update cart count after updating quantity
+                } else {
+                    alert('Failed to update quantity');
+                }
+            });
+        };
+
+        // Stripe checkout integration
+        const stripe = Stripe('pk_test_51QkgcEC4jul9TxeysCvtnUfZhPHv2n8BzaUfwqi7md4GSXA64WyYzYEFCTCfhAmANXq0LaEy3rdqVW9PQTMSQmp300P9pt8naq');  // Replace with your actual Stripe publishable key
+
+        document.getElementById('checkout-button').addEventListener('click', function() {
+            fetch('/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(session => {
+                return stripe.redirectToCheckout({ sessionId: session.id });
+            })
+            .then(result => {
+                if (result.error) {
+                    alert(result.error.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+</script>
+
+{% endblock %}

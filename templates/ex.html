@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<h2 class="head_of_page">Register</h2>
+<!-- Registration Form -->
+<div class="container mt-5">
+    <form id="registerForm" action="{{ url_for('register') }}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+            <div class="invalid-feedback">Please enter a valid username (at least 3 characters).</div>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+            <div class="invalid-feedback">Password must be at least 6 characters long.</div>
+        </div>
+        <div class="form-group">
+            <label for="re_password">Re-enter Password</label>
+            <input type="password" class="form-control" id="re_password" name="re_password" required>
+            <div class="invalid-feedback">Passwords do not match.</div>
+        </div>
+        <div class="form-group">
+            <label for="contact">Contact</label>
+            <input type="text" class="form-control" id="contact" name="contact" required>
+            <div class="invalid-feedback">Please enter a valid contact number.</div>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+            <div class="invalid-feedback">Please enter a valid email address.</div>
+        </div>
+        <div class="form-group">
+            <label for="date_of_birth">Date of Birth</label>
+            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
+            <div class="invalid-feedback">Please enter your date of birth.</div>
+        </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+            <div class="invalid-feedback">Please enter your address.</div>
+        </div>
+        <div class="form-group">
+            <label for="country">Country</label>
+            <select class="form-control" id="country" name="country">
+                <option value="">Select Country</option>
+            </select>
+            <input type="text" class="form-control mt-2" id="manual_country" name="manual_country" placeholder="Enter Country Manually">
+            <div class="invalid-feedback">Please select or enter a country.</div>
+        </div>
+        <div class="form-group">
+            <label for="state">State</label>
+            <select class="form-control" id="state" name="state">
+                <option value="">Select State</option>
+            </select>
+            <input type="text" class="form-control mt-2" id="manual_state" name="manual_state" placeholder="Enter State Manually">
+            <div class="invalid-feedback">Please select or enter a state.</div>
+        </div>
+        <div class="form-group">
+            <label for="city">City</label>
+            <select class="form-control" id="city" name="city">
+                <option value="">Select City</option>
+            </select>
+            <input type="text" class="form-control mt-2" id="manual_city" name="manual_city" placeholder="Enter City Manually">
+            <div class="invalid-feedback">Please select or enter a city.</div>
+        </div>
+        <div class="form-group">
+            <label for="image">Profile Image</label>
+            <input type="file" class="form-control-file" id="image" name="image">
+            <div class="invalid-feedback">Please upload a profile image.</div>
+        </div>
+        <div class="form-group">
+            <label for="role">Role</label>
+            <select class="form-control" id="role" name="role" required>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+            <div class="invalid-feedback">Please select a role.</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+        <p>Do you have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+    </form>
+</div>
+
+<script>
+    const apiKey = 'cEpSU0ZRck1ENEJTdmhXcm5lQU9Xc2xCZGpIOGNieElUdVBHTFlKcw==';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchCountries();
+
+        document.getElementById('country').addEventListener('change', function() {
+            fetchStates(this.value);
+        });
+
+        document.getElementById('state').addEventListener('change', function() {
+            fetchCities(this.value);
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            if (!validateForm()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+    });
+
+    const fetchCountries = () => {
+        console.log('Fetching countries...');
+        var headers = new Headers();
+        headers.append("X-CSCAPI-KEY", apiKey);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: headers,
+            redirect: 'follow'
+        };
+
+        fetch("https://api.countrystatecity.in/v1/countries", requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Countries data:', data);
+                const countrySelect = document.getElementById('country');
+                data.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country.iso2;
+                    option.textContent = country.name;
+                    countrySelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching countries:', error));
+    };
+
+    const fetchStates = (countryIso2) => {
+        console.log(`Fetching states for country ISO2: ${countryIso2}`);
+        var headers = new Headers();
+        headers.append("X-CSCAPI-KEY", apiKey);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: headers,
+            redirect: 'follow'
+        };
+
+        fetch(`https://api.countrystatecity.in/v1/countries/${countryIso2}/states`, requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log('States data:', data);
+                const stateSelect = document.getElementById('state');
+                stateSelect.innerHTML = '<option value="">Select State</option>';
+                data.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.iso2;
+                    option.textContent = state.name;
+                    stateSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching states:', error));
+    };
+
+    const fetchCities = (stateIso2) => {
+        const countryIso2 = document.getElementById('country').value;
+        console.log(`Fetching cities for state ISO2: ${stateIso2}`);
+        var headers = new Headers();
+        headers.append("X-CSCAPI-KEY", apiKey);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: headers,
+            redirect: 'follow'
+        };
+
+        fetch(`https://api.countrystatecity.in/v1/countries/${countryIso2}/states/${stateIso2}/cities`, requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Cities data:', data);
+                const citySelect = document.getElementById('city');
+                citySelect.innerHTML = '<option value="">Select City</option>';
+                data.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.id;
+                    option.textContent = city.name;
+                    citySelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching cities:', error));
+    };
+
+    const validateForm = () => {
+        let isValid = true;
+
+        const username = document.getElementById('username');
+        if (username.value.length < 3) {
+            username.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            username.classList.remove('is-invalid');
+        }
+
+        const password = document.getElementById('password');
+        if (password.value.length < 6) {
+            password.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            password.classList.remove('is-invalid');
+        }
+
+        const rePassword = document.getElementById('re_password');
+        if (rePassword.value !== password.value) {
+            rePassword.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            rePassword.classList.remove('is-invalid');
+        }
+
+        const contact = document.getElementById('contact');
+        const contactPattern = /^[0-9]{10}$/;
+        if (!contactPattern.test(contact.value)) {
+            contact.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            contact.classList.remove('is-invalid');
+        }
+
+        const email = document.getElementById('email');
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email.value)) {
+            email.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            email.classList.remove('is-invalid');
+        }
+
+        const dateOfBirth = document.getElementById('date_of_birth');
+        if (!dateOfBirth.value) {
+            dateOfBirth.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            dateOfBirth.classList.remove('is-invalid');
+        }
+
+        const address = document.getElementById('address');
+        if (!address.value) {
+            address.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            address.classList.remove('is-invalid');
+        }
+
+        const country = document.getElementById('country');
+        const manualCountry = document.getElementById('manual_country');
+        if (!country.value && !manualCountry.value) {
+            country.classList.add('is-invalid');
+            manualCountry.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            country.classList.remove('is-invalid');
+            manualCountry.classList.remove('is-invalid');
+        }
+
+        const state = document.getElementById('state');
+        const manualState = document.getElementById('manual_state');
+        if (!state.value && !manualState.value) {
+            state.classList.add('is-invalid');
+            manualState.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            state.classList.remove('is-invalid');
+            manualState.classList.remove('is-invalid');
+        }
+
+        const city = document.getElementById('city');
+        const manualCity = document.getElementById('manual_city');
+        if (!city.value && !manualCity.value) {
+            city.classList.add('is-invalid');
+            manualCity.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            city.classList.remove('is-invalid');
+            manualCity.classList.remove('is-invalid');
+        }
+
+        const image = document.getElementById('image');
+        if (!image.value) {
+            image.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            image.classList.remove('is-invalid');
+        }
+
+        const role = document.getElementById('role');
+        if (!role.value) {
+            role.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            role.classList.remove('is-invalid');
+        }
+
+        return isValid;
+    };
+</script>
+
+{% endblock %}

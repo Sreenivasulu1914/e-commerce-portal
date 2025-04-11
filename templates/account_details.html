@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Account Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Account Details</h2>
+    <form id="accountForm" action="{{ url_for('update_account') }}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+        </div>
+        <div class="form-group">
+            <label for="contact">Contact</label>
+            <input type="text" class="form-control" id="contact" name="contact" value="{{ user.contact }}" required>
+        </div>
+        <div class="form-group">
+            <label for="date_of_birth">Date of Birth</label>
+            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="{{ user.date_of_birth }}" required>
+        </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" class="form-control" id="address" name="address" value="{{ user.address }}" required>
+        </div>
+        <div class="form-group">
+            <label for="country">Country</label>
+            <select class="form-control" id="country" name="country" required>
+                <option value="{{ user.country }}">{{ user.country }}</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="state">State</label>
+            <select class="form-control" id="state" name="state" required>
+                <option value="{{ user.state }}">{{ user.state }}</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="city">City</label>
+            <select class="form-control" id="city" name="city" required>
+                <option value="{{ user.city }}">{{ user.city }}</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="image">Profile Image</label>
+            <input type="file" class="form-control-file" id="image" name="image">
+        </div>
+        <button type="submit" class="btn btn-primary">Update Account</button>
+    </form>
+</div>
+
+<script>
+    const apiKey = 'cEpSU0ZRck1ENEJTdmhXcm5lQU9Xc2xCZGpIOGNieElUdVBHTFlKcw==';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchCountries();
+
+        document.getElementById('country').addEventListener('change', function() {
+            fetchStates(this.value);
+        });
+
+        document.getElementById('state').addEventListener('change', function() {
+            fetchCities(this.value);
+        });
+
+        document.getElementById('accountForm').addEventListener('submit', function(event) {
+            if (!validateForm()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+    });
+
+    const fetchCountries = () => {
+        console.log('Fetching countries...');
+        var headers = new Headers();
+        headers.append("X-CSCAPI-KEY", apiKey);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: headers,
+            redirect: 'follow'
+        };
+
+        fetch("https://api.countrystatecity.in/v1/countries", requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Countries data:', data);
+                const countrySelect = document.getElementById('country');
+                data.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country.iso2;
+                    option.textContent = country.name;
+                    countrySelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching countries:', error));
+    };
+
+    const fetchStates = (countryIso2) => {
+        console.log(`Fetching states for country ISO2: ${countryIso2}`);
+        var headers = new Headers();
+        headers.append("X-CSCAPI-KEY", apiKey);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: headers,
+            redirect: 'follow'
+        };
+
+        fetch(`https://api.countrystatecity.in/v1/countries/${countryIso2}/states`, requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log('States data:', data);
+                const stateSelect = document.getElementById('state');
+                stateSelect.innerHTML = '<option value="">Select State</option>';
+                data.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.iso2;
+                    option.textContent = state.name;
+                    stateSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching states:', error));
+    };
+
+    const fetchCities = (stateIso2) => {
+        const countryIso2 = document.getElementById('country').value;
+        console.log(`Fetching cities for state ISO2: ${stateIso2}`);
+        var headers = new Headers();
+        headers.append("X-CSCAPI-KEY", apiKey);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: headers,
+            redirect: 'follow'
+        };
+
+        fetch(`https://api.countrystatecity.in/v1/countries/${countryIso2}/states/${stateIso2}/cities`, requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Cities data:', data);
+                const citySelect = document.getElementById('city');
+                citySelect.innerHTML = '<option value="">Select City</option>';
+                data.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.id;
+                    option.textContent = city.name;
+                    citySelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching cities:', error));
+    };
+</script>
+{% endblock %}

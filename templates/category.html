@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+
+    <h1 class="text-center mb-4 head_of_page" ><img src="{{ url_for('static', filename='images/product-categories.png') }}" style="height: 50px;width: 50px;">&nbsp;Categories</h1>
+
+    <!-- Categories -->
+    <div class="container mt-5">
+        <div class="row" id="category-cards">
+            <!-- Cards will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- JavaScript to fetch and display categories -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/categories')
+                .then(response => response.json())
+                .then(categories => {
+                    const categoryCardsContainer = document.getElementById('category-cards');
+                    categories.forEach(category => {
+                        const categoryCard = document.createElement('div');
+                        categoryCard.className = 'col-md-3 mb-4';
+                        categoryCard.innerHTML = `
+                            <div class="card">
+                                <img src="/static/upload/${category.image}" class="card-img-top" alt="${category.category_type}">
+                                <div class="card-body">
+                                    <h5 class="card-title">${category.category_type}</h5>
+                                    <p class="card-text">${category.description}</p>
+                                    <a href="/category/${category.category_id}" class="btn btn-primary btn-view-product">View Category</a>
+                                </div>
+                            </div>
+                        `;
+                        categoryCardsContainer.appendChild(categoryCard);
+                    });
+                });
+        });
+    </script>
+
+{% endblock %}

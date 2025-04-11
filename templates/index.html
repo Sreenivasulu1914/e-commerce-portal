@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+    <hr>
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="row no-gutters carousel-body">
+                    <div class="col-md-4">
+                        <div class="carousel-caption d-none d-md-block carousel-caption-top" style="color: black;">
+                            <h2 style="background-color: blue; color:white;text-align: center;">New Arrival</h2>
+                            <h3 style="background-color: black;color:white;text-align: center;"> Get the latest products</h3>
+                            <p> Get the latest fashion trends at affordable prices</p>
+                            <button style="justify-content: left;" class="btn btn-primary btn-left">Learn more </button>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <img src="{{ url_for('static', filename='images/banner5.jpg') }}" class="d-block w-100 carousel_img" alt="First slide">
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <div class="carousel-caption d-none d-md-block carousel-caption-top" style="color: black;">
+                            <h2 style="background-color:blue;color:white;text-align: center;"> Best Sellers</h2>
+                            <h3 style="background-color:black;color:white;text-align: center;"> Get the best products</h3>
+                            <p> Get the best fashion trends at affordable prices</p>
+                            <button style="justify-content: left;" class="btn btn-primary btn-left">Learn more </button>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <img src="{{ url_for('static', filename='images/banner2.gif') }}" class="d-block w-100 carousel_img" alt="Second slide">
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <div class="carousel-caption carousel-caption-top d-none d-md-block">
+                            <h2 style="background-color:blue;color:white;text-align: center;">E-Commerce Portal </h2>
+                            <h3 style="background-color: black; color:white;text-align: center;">E-Commerce</h3>
+                            <p style="color:black">one stop solution for all your shopping needs</p>
+                            <button style="justify-content: left;" class="btn btn-primary btn-left">Learn more </button>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <img src="{{ url_for('static', filename='images/banner3.jpg') }}" class="d-block w-100 carousel_img" alt="Third slide">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+
+    <hr>
+        <br>
+    <div class="row container-fluid">
+        <div class="col-md-3">
+            <h4 > <img src="{{ url_for('static', filename='images/profile.png') }}" style="height:50px;width:40px">  User Management</h4>
+            <p>User management ensures secure access and personalized experiences for e-commerce users</p>
+            <a href="">Learn more</a>
+        </div>
+        <div  class="col-md-3">
+            <h4 > <img src="{{ url_for('static', filename='images/new-product.png') }}" style="height:50px;width:40px">  Product Managment</h4>
+            <p>
+                Product management streamlines adding, updating, and organizing products for a seamless e-commerce experience.</p>
+                <a href="">Learn more</a>
+        </div>
+        <div  class="col-md-3">
+            <h4 > <img src="{{ url_for('static', filename='images/ecommerce.png') }}" style="height:50px;width:40px">  E-Commerce Portal</h4>
+            <p>An e-commerce portal enables seamless online buying and selling of products of different companies and services.</p>
+            <a href="">Learn more</a>
+        </div>
+        <div  class="col-md-3">
+            <h4 > <img src="{{ url_for('static', filename='images/connection.png') }}" style="height:50px;width:40px">  With Latest Technology</h4>
+            <p>Latest technology drives innovation, efficiency, and enhanced user experiences in e-commerce.</p>
+            <a href="">Learn more</a>
+        </div>
+    </div>
+    <br>
+    <hr>
+    <h3 align="center">Latest Additions Products</h3>
+    <div class="container mt-5">
+        <div class="row" id="product-container">
+            <!-- Products will be dynamically inserted here -->
+            
+        </div>
+        
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/products?limit=8')
+                .then(response => response.json())
+                .then(products => {
+                    const productContainer = document.getElementById('product-container');
+                    products.forEach(product => {
+                        const productCard = document.createElement('div');
+                        productCard.className = 'col-md-3 mt-4';
+                        productCard.innerHTML = `
+                            <div class="card">
+                                <img src="/static/upload/${product.image}" class="card-img-top" alt="${product.product_name}">
+                                <div class="card-body">
+                                    <h5 class="card-title">${product.product_name}</h5>
+                                    <p class="card-text">&#8377; ${product.cost}</p>
+                                    <a href="/view_product/${product.product_id}" class="btn btn-primary">View Product</a>
+                                </div>
+                            </div>
+                        `;
+                        productContainer.appendChild(productCard);
+                    });
+                });
+        });
+    </script>
+
+    <style>
+        /* Add this CSS to your stylesheet or within a <style> tag in your HTML file */
+        .carousel-caption {
+            opacity: 0;
+            transform: translateX(100%);
+            animation: slideIn 1s ease-in-out 1s forwards; /* 1s delay */
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+
+
+
+
+<h2 class="head_of_page"> <img src="{{ url_for('static', filename='images/settings.png') }}" style="height: 50px;width: 60px;">&nbsp;&nbsp;Admin Dashboard</h2>
+<!-- Admin Dashboard -->
+<div class="container mt-5">
+
+    <ul class="list-group lgroup">
+        <li class="list-group-item lgi"><a href="{{ url_for('index') }}" class=" user-link "><i class="bi bi-house-fill"></i> Home</a></li>
+        <li class="list-group-item lgi"><a href="{{ url_for('add_category') }}" class=" user-link"> <i class="bi bi-bag-plus-fill"></i> Add Category</a></li>
+        <li class="list-group-item lgi"> <a href="{{ url_for('add_company') }}" class=" user-link"><i class="bi bi-building-fill-add"></i> Add Company</a></li>
+        <li class="list-group-item lgi" > <a href="{{ url_for('add_product') }}" class=" user-link"><i class="bi bi-plus-circle-fill"></i> Add Product</a></li>
+        <li class="list-group-item lgi"><a href="{{ url_for('category_report') }}" class=" user-link">Category Report</a></li>
+        <li class="list-group-item lgi"> <a href="{{ url_for('product_report') }}" class=" user-link">Product Report</a></li>
+       <li class="list-group-item lgi" > <a href="{{ url_for('company_report') }}" class=" user-link">Company Report</a></li>
+       <li class="list-group-item lgi"><a href="{{ url_for('change_password') }}" class=" user-link">Change Password</a></li>
+        <li class="list-group-item lgi"><a href="{{ url_for('logout') }}" class="user-link">Logout</a></li>
+    </ul>
+</div>
+{% endblock %}
