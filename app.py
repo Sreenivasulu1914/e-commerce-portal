@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your_secret_key')
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-CORS(app, resources={r"/api/*": {"origins": ["http://192.168.195.150:5000", "http://127.0.0.1:5000"]}})
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
