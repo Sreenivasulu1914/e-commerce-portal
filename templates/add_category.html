@@ -3,26 +3,198 @@
 {% block title %}Add Categories{% endblock %}
 
 {% block content %}
+    <!-- Heading Section -->
+    <section class="bg-light py-4">
+        <div class="container">
+            <h1 class="display-5 fw-bold animate__animated animate__fadeIn">
+                <i class="fas fa-list-ul me-2 text-primary"></i> {{ 'Edit Category' if category else 'Add Category' }}
+            </h1>
+            <p class="lead">{{ 'Update an existing category in our portfolio.' if category else 'Add a new category to showcase your products.' }}</p>
+        </div>
+    </section>
 
-    <h2 class="head_of_page">Add Category</h2>
     <!-- Add Category Form -->
-    <div class="container mt-5">
-       
-        <form action="{{ url_for('edit_category', category_id=category['category_id']) if category else url_for('add_category') }}" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="category_type">Category Type</label>
-                <input type="text" class="form-control" id="category_type" name="category_type" value="{{ category['category_type'] if category else '' }}" required>
+    <div class="container mt-5 mb-5">
+        <div class="card p-4 shadow-sm animate__animated animate__fadeInUp" style="max-width: 600px; margin: 0 auto;">
+            <form action="{{ url_for('edit_category', category_id=category['category_id']) if category else url_for('add_category') }}" method="post" enctype="multipart/form-data" id="category-form">
+                <div class="form-group mb-3">
+                    <label for="category_type" class="form-label">Category Type</label>
+                    <input type="text" class="form-control" id="category_type" name="category_type" value="{{ category['category_type'] if category else '' }}" required aria-describedby="category_type_help">
+                    <small id="category_type_help" class="form-text text-muted">Enter the name of the category (e.g., Electronics).</small>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="4" required aria-describedby="description_help">{{ category['description'] if category else '' }}</textarea>
+                    <small id="description_help" class="form-text text-muted">Provide a brief description of the category.</small>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="image" class="form-label">Image</label>
+                    <input type="file" class="form-control-file" id="image" name="image" {% if not category %}required{% endif %} accept="image/*" aria-describedby="image_help">
+                    <small id="image_help" class="form-text text-muted">{{ 'Upload a new image or keep the existing one.' if category else 'Upload an image to represent the category.' }}</small>
+                </div>
+                <button type="submit" class="btn btn-primary w-100" id="submit-btn">{{ 'Update Category' if category else 'Add Category' }}</button>
+            </form>
+            <!-- Loading Spinner -->
+            <div id="loading-spinner" class="text-center mt-3 d-none">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="4" required>{{ category['description'] if category else '' }}</textarea>
-            </div>
-            <div class="form-group">
-                <label for="image">Image</label>
-                <input type="file" class="form-control-file" id="image" name="image" {% if not category %}required{% endif %}>
-            </div>
-            <button type="submit" class="btn btn-primary">{{ 'Update Category' if category else 'Add Category' }}</button>
-        </form>
+        </div>
     </div>
 
-    {% endblock %}
+    <!-- JavaScript for Interactivity -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('category-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const loadingSpinner = document.getElementById('loading-spinner');
+
+            form.addEventListener('submit', function (e) {
+                // Show loading spinner and disable button
+                submitBtn.disabled = true;
+                loadingSpinner.classList.remove('d-none');
+
+                // Simulate form submission delay (remove in production if backend handles this)
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    loadingSpinner.classList.add('d-none');
+                }, 2000); // Replace with actual form submission logic
+            });
+
+            // Real-time validation feedback
+            const inputs = form.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('input', function () {
+                    if (input.checkValidity()) {
+                        input.classList.remove('is-invalid');
+                        input.classList.add('is-valid');
+                    } else {
+                        input.classList.remove('is-valid');
+                        input.classList.add('is-invalid');
+                    }
+                });
+            });
+        });
+    </script>
+    <style>
+        /* Heading Section */
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.display-5 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.lead {
+    font-size: 1.25rem;
+    font-weight: 300;
+    color: #6c757d;
+}
+
+.text-primary {
+    color: #007bff !important;
+}
+
+/* Form Styling */
+.card {
+    border: none;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.shadow-sm {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-control, .form-control-file {
+    border-radius: 6px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus, .form-control-file:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #333;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    border-radius: 6px;
+    padding: 0.75rem;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+    opacity: 0.65;
+    transform: none;
+}
+
+/* Validation Feedback */
+.is-valid {
+    border-color: #28a745 !important;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.form-text {
+    font-size: 0.875rem;
+}
+
+/* Loading Spinner */
+#loading-spinner {
+    display: none;
+}
+
+#loading-spinner.d-none {
+    display: none !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+    .display-5 {
+        font-size: 1.8rem;
+    }
+    .lead {
+        font-size: 1rem;
+    }
+    .fa-list-ul {
+        font-size: 1.5rem;
+    }
+    .card {
+        padding: 1.5rem !important;
+    }
+    .btn-primary {
+        padding: 0.5rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .display-5 {
+        font-size: 3rem;
+    }
+}
+
+/* Ensure consistency with body background */
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+    </style>
+{% endblock %}
