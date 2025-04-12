@@ -34,7 +34,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('about_us') }}"><i class="bi bi-info-circle-fill"></i> About
-                        About</a>
+                        </a>
                 </li>
                 {% if session.get('role') %}
                 <li class="nav-item">
@@ -150,59 +150,113 @@
 
 
 
-
-    <footer class="container-fluid bg-dark text-white mt-5" >
-        <div class="container py-4" >
-            <div class="row" >
-                <div class="col-md-4">
-                    <h5>Browse Page </h5>
+    <footer class="container-fluid bg-dark text-white mt-5">
+        <div class="container py-5">
+            <div class="row g-4">
+                <!-- Navigation -->
+                <div class="col-md-4 col-sm-6 animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-compass me-2 text-primary"></i> Explore</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('index') }}" class="text-white text-decoration-none hover-link">Home</a></li>
+                        <li><a href="{{ url_for('about_us') }}" class="text-white text-decoration-none hover-link">About Us</a></li>
+                        <li><a href="{{ url_for('products') }}" class="text-white text-decoration-none hover-link">Products</a></li>
+                        <li><a href="{{ url_for('contact_us') }}" class="text-white text-decoration-none hover-link">Contact</a></li>
+                    </ul>
                 </div>
-                <div class="col-md-4">
-                    <h5>Modules of Project</h5>
+                <!-- Modules -->
+                <div class="col-md-4 col-sm-6 animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-cubes me-2 text-primary"></i> Our Systems</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('products') }}" class="text-white text-decoration-none hover-link">Product Management</a></li>
+                        <li><a href="{{ url_for('categories') }}" class="text-white text-decoration-none hover-link">Category Management</a></li>
+                        <li><a href="#" class="text-white text-decoration-none hover-link disabled" aria-disabled="true">Order Management (Soon)</a></li>
+                    </ul>
                 </div>
-                <div class="col-md-4">
-                    <h5>E-Commerce Portal</h5>
+                <!-- Contact & Newsletter -->
+                <div class="col-md-4 col-sm-12 animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-store me-2 text-primary"></i> E-Commerce Portal</h5>
+                    <ul class="list-unstyled mb-4">
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 5-679, High School Veedhi, Kothacheruvu - 515133, Andhra Pradesh</li>
+                        <li><a href="mailto:support@ecommerceportal.com" class="text-white text-decoration-none hover-link"><i class="fas fa-envelope me-2"></i> support@ecommerceportal.com</a></li>
+                        <li><a href="tel:+919876543210" class="text-white text-decoration-none hover-link"><i class="fas fa-phone me-2"></i> +91 98765 43210</a></li>
+                    </ul>
+                    <h6 class="fw-bold mb-2">Stay Updated</h6>
+                    <form id="newsletterForm" class="d-flex">
+                        <input type="email" class="form-control me-2" placeholder="Enter your email" aria-label="Email" required>
+                        <button style="width: 300px !important;" type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-1"></i> Subscribe</button>
+                    </form>
                 </div>
-
             </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <!-- <h5>Browse Page </h5> -->
-                    <ul class="list-unstyled">
-                        <li><a href="{{url_for('index')}}" class="text-white">Home Page </a></li>
-                        <li><a href="{{url_for('about_us')}}" class="text-white">About </a></li>
-                        <li><a href="{{url_for('login')}}" class="text-white">Login</a></li>
-                        <li><a href="{{ url_for('contact_us') }}" class="text-white">Contact Us </a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <!-- <h5>Modules of Project</h5> -->
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-white">Product Management System </a></li>
-                        <li><a href="#" class="text-white">Category managment System </a></li>
-                        <li><a href="#" class="text-white">Order Managment System</a></li>
-                        <!-- <li><a href="#" class="text-white">Link 4</a></li> -->
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <!-- <h5>E-Commerce Portal</h5> -->
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-white">Registered company name,Inc </a></li>
-                        <li><a href="#" class="text-white">5-679, High School Veedhi </a></li>
-                        <li><a href="#" class="text-white">Kothacheruvu - 515133</a></li>
-                        <li><a href="#" class="text-white">Andhra Pradesh</a></li>
-                    </ul>
+            <!-- Social Icons -->
+            <div class="row mt-4 text-center animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
+                <div class="col-12">
+                    <a href="https://facebook.com" class="text-white mx-2 hover-icon" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f fa-lg"></i></a>
+                    <a href="https://twitter.com" class="text-white mx-2 hover-icon" target="_blank" aria-label="Twitter"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="https://instagram.com" class="text-white mx-2 hover-icon" target="_blank" aria-label="Instagram"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="https://linkedin.com" class="text-white mx-2 hover-icon" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in fa-lg"></i></a>
                 </div>
             </div>
         </div>
-        <div class=" row bg-black text-center py-3" style="background-color: black;">
-            <div class="col-8"><p class="mb-0">&copy; 2023 E-Commerce Portal. All rights reserved.</p></div>
-            <div class="col-4">Developed By Sreenivasulu Panasabotla</div>
-            
+        <!-- Copyright -->
+        <div class="container-fluid bg-black text-center py-3">
+            <div class="row">
+                <div class="col-12">
+                    <p class="mb-0">© 2025 E-Commerce Portal. All rights reserved. | Developed by <a href="https://github.com/Sreenivasulu1914" class="text-primary text-decoration-none hover-link" target="_blank">Sreenivasulu Panasabotla</a></p>
+                </div>
+            </div>
         </div>
     </footer>
-
-
+    
+    <!-- Footer Styles -->
+    <style>
+        .hover-link {
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .hover-link:hover {
+            color: #007bff !important;
+            transform: translateX(5px);
+        }
+        .hover-icon {
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .hover-icon:hover {
+            color: #007bff !important;
+            transform: scale(1.2);
+        }
+        #newsletterForm input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        .disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        @media (max-width: 576px) {
+            footer h5 {
+                font-size: 1.1rem;
+            }
+            footer ul li {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    
+    <!-- Footer JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const newsletterForm = document.getElementById('newsletterForm');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const email = this.querySelector('input[type="email"]').value;
+                    if (email) {
+                        alert('Thank you for subscribing! Stay tuned for updates.');
+                        this.reset();
+                    }
+                });
+            }
+        });
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

@@ -1,42 +1,211 @@
 {% extends "base.html" %}
 
-{% block title %}Categories{% endblock %}
+{% block title %}Categories - E-Commerce Portal{% endblock %}
 
 {% block content %}
+<!-- Header -->
+<section class="bg-light py-4">
+    <div class="container">
+        <h1 class="display-5 fw-bold animate__animated animate__fadeIn">
+            <i class="fas fa-list-ul me-2 text-primary"></i> Categories
+        </h1>
+        <p class="lead">Discover our range of product categories.</p>
+    </div>
+</section>
 
-    <h1 class="text-center mb-4 head_of_page" ><img src="{{ url_for('static', filename='images/product-categories.png') }}" style="height: 50px;width: 50px;">&nbsp;Categories</h1>
-
-    <!-- Categories -->
-    <div class="container mt-5">
-        <div class="row" id="category-cards">
-            <!-- Cards will be inserted here by JavaScript -->
+<!-- Search and Filters -->
+<section class="container my-4">
+    <div class="row g-3 align-items-center">
+        <div class="col-12 col-md-6">
+            <form id="searchForm" class="d-flex flex-wrap gap-2">
+                <input class="form-control flex-grow-1" type="search" placeholder="Search categories..." aria-label="Search" id="searchInput">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search me-1"></i> Search
+                </button>
+                <button class="btn btn-outline-secondary" type="reset" id="resetSearch">Reset</button>
+            </form>
+        </div>
+        <div class="col-12 col-md-6 text-md-end text-center mt-2 mt-md-0">
+            <span class="text-muted" id="categoryCount">0 categories</span>
         </div>
     </div>
+</section>
 
-    <!-- JavaScript to fetch and display categories -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            fetch('/api/categories')
-                .then(response => response.json())
+<!-- Categories -->
+<section class="container my-5">
+    <div class="row" id="category-cards"></div>
+    <div id="no-categories-message" class="alert alert-info text-center d-none">
+        <i class="fas fa-info-circle me-2"></i> No categories found. Try another search!
+    </div>
+    <div id="loading-spinner" class="text-center d-none">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryCardsContainer = document.getElementById('category-cards');
+        const noCategoriesMessage = document.getElementById('no-categories-message');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const categoryCount = document.getElementById('categoryCount');
+
+        // Fetch categories
+        const fetchCategories = (query = '') => {
+            loadingSpinner.classList.remove('d-none');
+            categoryCardsContainer.innerHTML = '';
+            noCategoriesMessage.classList.add('d-none');
+
+            const url = new URL('{{ url_for("api_categories") }}', window.location.origin);
+            if (query) url.searchParams.append('search', query);
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch categories');
+                    return response.json();
+                })
                 .then(categories => {
-                    const categoryCardsContainer = document.getElementById('category-cards');
-                    categories.forEach(category => {
+                    loadingSpinner.classList.add('d-none');
+                    let filteredCategories = categories;
+                    if (query) {
+                        filteredCategories = categories.filter(category => 
+                            category.category_name.toLowerCase().includes(query.toLowerCase())
+                        );
+                    }
+
+                    categoryCount.textContent = `${filteredCategories.length} categor${filteredCategories.length !== 1 ? 'ies' : 'y'}`;
+
+                    if (filteredCategories.length === 0) {
+                        noCategoriesMessage.classList.remove('d-none');
+                        return;
+                    }
+
+                    filteredCategories.forEach((category, index) => {
                         const categoryCard = document.createElement('div');
-                        categoryCard.className = 'col-md-3 mb-4';
+                        categoryCard.className = 'col-12 col-sm-6 col-md-3 mb-4 animate__animated animate__fadeInUp';
+                        categoryCard.style.animationDelay = `${index * 0.05}s`; // Faster for mobile
                         categoryCard.innerHTML = `
-                            <div class="card">
-                                <img src="/static/upload/${category.image}" class="card-img-top" alt="${category.category_type}">
-                                <div class="card-body">
-                                    <h5 class="card-title">${category.category_type}</h5>
-                                    <p class="card-text">${category.description}</p>
-                                    <a href="/category/${category.category_id}" class="btn btn-primary btn-view-product">View Category</a>
+                            <div class="card h-100 shadow-sm hover-scale">
+                                <img src="{{ url_for('static', filename='upload/') }}${category.image || 'default_category.jpg'}" class="card-img-top" alt="${category.category_name}" style="height: 180px; object-fit: cover;">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">${category.category_name}</h5>
+                                    <p class="card-text text-muted flex-grow-1">${category.description ? category.description.substring(0, 60) + (category.description.length > 60 ? '...' : '') : 'No description available'}</p>
+                                    <br>
+                                    <a href="/category/${category.category_id}" class="btn btn-primary btn-view-product mt-auto" aria-label="View ${category.category_name} category">
+                                        <i class="fas fa-eye me-1"></i> View Category
+                                    </a>
                                 </div>
                             </div>
                         `;
                         categoryCardsContainer.appendChild(categoryCard);
                     });
+                })
+                .catch(error => {
+                    loadingSpinner.classList.add('d-none');
+                    noCategoriesMessage.classList.remove('d-none');
+                    console.error('Error fetching categories:', error);
                 });
-        });
-    </script>
+        };
 
+        // Initial fetch
+        fetchCategories();
+
+        // Search form
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const query = document.getElementById('searchInput').value;
+            fetchCategories(query);
+        });
+
+        // Reset search
+        document.getElementById('resetSearch').addEventListener('click', function() {
+            document.getElementById('searchInput').value = '';
+            fetchCategories();
+        });
+    });
+</script>
+
+<style>
+    /* Hover Effects */
+    .hover-scale {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-scale:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Card Image */
+    .card-img-top {
+        transition: transform 0.3s ease;
+    }
+    .card-img-top:hover {
+        transform: scale(1.05);
+    }
+
+    /* Search Input */
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    /* Card Alignment */
+    .card-body {
+        display: flex;
+        flex-column: column;
+    }
+    .btn-view-product {
+        margin-top: auto;
+        padding: 8px 12px; /* Smaller for mobile */
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+        .display-5 {
+            font-size: 2.5rem;
+        }
+        .lead {
+            font-size: 1rem;
+        }
+        .card-img-top {
+            height: 160px; /* Slightly smaller for tablets */
+        }
+    }
+    @media (max-width: 576px) {
+        .display-5 {
+            font-size: 1.8rem;
+        }
+        .lead {
+            font-size: 0.9rem;
+        }
+        .card-img-top {
+            height: 140px; /* Compact for phones */
+        }
+        .card-title {
+            font-size: 1rem;
+        }
+        .card-text {
+            font-size: 0.85rem;
+        }
+        .badge {
+            font-size: 0.75rem;
+        }
+        .btn-view-product {
+            font-size: 0.9rem;
+            padding: 6px 10px;
+        }
+        .form-control {
+            font-size: 0.9rem;
+        }
+        #searchForm {
+            flex-direction: column;
+        }
+        #searchForm .btn {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+    }
+</style>
 {% endblock %}

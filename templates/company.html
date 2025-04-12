@@ -3,37 +3,183 @@
 {% block title %}Our Companies{% endblock %}
 
 {% block content %}
-    <h1 class="text-center mb-4 head_of_page">Our Companies</h1>
+
+
+<section class="bg-light py-4">
+    <div class="container">
+        <h1 class="display-5 fw-bold animate__animated animate__fadeIn">
+            <i class="fas fa-building me-2 text-primary"></i> Our Companies
+        </h1>
+
+        <p class="lead">Explore our diverse portfolio of innovative brands.</p>
+    </div>
+</section><br><br>
+
+
+
+    <!-- <h1 class="text-center mb-4 head_of_page">Our Companies</h1> -->
+    <!-- Search Bar -->
+    <div class="container mb-4">
+        <input type="text" id="search-bar" class="form-control" placeholder="Search companies...">
+    </div>
     <!-- Company Information -->
     <div class="container">
         <div class="row cards" id="company-cards">
             <!-- Company cards will be dynamically inserted here -->
         </div>
     </div>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="text-center my-4">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
-    <!-- JavaScript to fetch and display companies -->
+    <!-- Scripts -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            const companyCardsContainer = document.getElementById('company-cards');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const searchBar = document.getElementById('search-bar');
+
+            // Show loading spinner
+            loadingSpinner.classList.add('active');
+
             fetch('/api/companies')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
                 .then(companies => {
-                    const companyCardsContainer = document.getElementById('company-cards');
-                    companies.forEach(company => {
+                    loadingSpinner.classList.remove('active');
+                    companies.forEach((company, index) => {
                         const companyCard = document.createElement('div');
-                        companyCard.className = 'col-md-3 mb-4';
+                        companyCard.className = 'col-12 col-sm-6 col-md-4 col-lg-3 mb-4 animate__animated animate__fadeInUp';
+                        companyCard.style.animationDelay = `${index * 0.1}s`;
                         companyCard.innerHTML = `
-                            <div class="card card_position" style="height: 300px; ">
-                                <img src="/static/upload/${company.image}" class="card-img-top" alt="${company.brand_name}">
+                            <div class="card card_position" role="article" aria-labelledby="company-${company.brand_id}">
+                                <img src="/static/upload/${company.image}" class="card-img-top img-fluid" alt="${company.brand_name}" loading="lazy">
                                 <div class="card-body">
-                                    <h5 class="card-title">${company.name}</h5>
-                                    <p class="card-text">${company.description}</p>
-                                    <a href="/company/${company.brand_id}" class="btn btn-primary btn-view-product">View Products</a>
+                                    <h5 class="card-title" id="company-${company.brand_id}">${company.name}</h5>
+                                    <p class="card-text">${company.description.substring(0, 100)}${company.description.length > 100 ? '...' : ''}</p><br>
+                                    <a href="/company/${company.brand_id}" class="btn btn-primary btn-view-product" role="button" aria-label="View products for ${company.name}">View Products</a>
                                 </div>
                             </div>
                         `;
                         companyCardsContainer.appendChild(companyCard);
                     });
+                })
+                .catch(error => {
+                    console.error('Error fetching companies:', error);
+                    loadingSpinner.classList.remove('active');
+                    companyCardsContainer.innerHTML = '<p class="text-center text-danger">Failed to load companies. Please try again later.</p>';
                 });
+
+            // Search functionality
+            searchBar.addEventListener('input', function (e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const cards = document.querySelectorAll('#company-cards .card');
+                cards.forEach(card => {
+                    const title = card.querySelector('.card-title').textContent.toLowerCase();
+                    card.parentElement.style.display = title.includes(searchTerm) ? 'block' : 'none';
+                });
+            });
         });
     </script>
+
+
+
+<style>
+
+
+    /* Base styles */
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+.head_of_page {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.card_position {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: auto;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-img-top {
+    object-fit: contain;
+    height: 150px;
+    width: 100%;
+}
+
+.card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.btn-view-product {
+    width: 80%;
+    margin-top: auto;
+    background-color: #007bff;
+    border-color: #007bff;
+    transition: background-color 0.2s ease;
+}
+
+.btn-view-product:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+#loading-spinner {
+    display: none;
+}
+
+#loading-spinner.active {
+    display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .head_of_page {
+        font-size: 1.8rem;
+    }
+    .card_position {
+        min-height: 280px;
+    }
+    .card-img-top {
+        height: 120px;
+    }
+    .card-title {
+        font-size: 1.1rem;
+    }
+    .card-text {
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .card_position:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+}
+
+@media (min-width: 992px) {
+    .col-md-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+}
+</style>
 {% endblock %}

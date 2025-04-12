@@ -707,7 +707,7 @@ def api_products():
         return jsonify({'error': 'Database connection failed'}), 500
     try:
         cursor = conn.cursor(dictionary=True)
-        sql = 'SELECT product_id, product_name, description, image FROM products WHERE 1=1'
+        sql = 'SELECT product_id, product_name, description, image, cost FROM products WHERE 1=1'  # Added cost
         params = []
         if query:
             sql += ' AND product_name LIKE %s'
@@ -725,6 +725,9 @@ def api_products():
         logger.error(f"Products fetch failed: {e.errno} - {str(e)}")
         conn.close()
         return jsonify({'error': str(e)}), 500
+    
+
+    
 
 @app.route('/api/categories')
 def api_categories():
