@@ -903,34 +903,17 @@ def add_category():
         flash('Access denied', 'danger')
         return redirect(url_for('index'))
     
-    category_id = request.args.get('category_id')
-    category = None
-    if category_id:
-        conn = get_db_connection()
-        if conn is None:
-            logger.error("Add category: No DB connection")
-            flash('Database connection failed', 'danger')
-            return redirect(url_for('category_report'))
-        try:
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute('SELECT * FROM categories WHERE category_id = %s', (category_id,))
-            category = cursor.fetchone()
-            cursor.close()
-            conn.close()
-        except mysql.connector.Error as e:
-            logger.error(f"Fetch category failed: {e.errno} - {str(e)}")
-            conn.close()
-            flash('Database error', 'danger')
-            return redirect(url_for('category_report'))
-    
     if request.method == 'POST':
         category_type = request.form['category_type']
         description = request.form['description']
-        image = request.files['image']
-        upload_folder = os.path.join('static', 'upload')
+        image = request.files.get('image')  # Optional image
+        image_filename = None
+        upload_folder = os.path.join(app.root_path, 'static', 'upload')
         os.makedirs(upload_folder, exist_ok=True)
-        image_filename = image.filename
-        image.save(os.path.join(upload_folder, image_filename))
+        if image and image.filename:
+            image_filename = image.filename
+            image.save(os.path.join(upload_folder, image_filename))
+        
         conn = get_db_connection()
         if conn is None:
             logger.error("Add category: No DB connection")
@@ -939,27 +922,21 @@ def add_category():
         
         try:
             cursor = conn.cursor(dictionary=True)
-            if category:
-                cursor.execute(
-                    'UPDATE categories SET category_type = %s, description = %s, image = %s WHERE category_id = %s',
-                    (category_type, description, image_filename, category_id)
-                )
-            else:
-                cursor.execute(
-                    'INSERT INTO categories (category_type, description, image) VALUES (%s, %s, %s)',
-                    (category_type, description, image_filename)
-                )
+            cursor.execute(
+                'INSERT INTO categories (category_type, description, image) VALUES (%s, %s, %s)',
+                (category_type, description, image_filename)
+            )
             conn.commit()
             cursor.close()
             conn.close()
-            flash('Category saved successfully', 'success')
+            flash('Category added successfully', 'success')
             return redirect(url_for('category_report'))
         except mysql.connector.Error as e:
             logger.error(f"Add category failed: {e.errno} - {str(e)}")
             conn.close()
-            flash('Database error', 'danger')
+            flash(f'Error adding category: {str(e)}', 'danger')
             return redirect(url_for('category_report'))
-    return render_template('add_category.html', category=category)
+    return render_template('add_category.html', category=None)
 
 @app.route('/category_report')
 def category_report():
@@ -1009,21 +986,28 @@ def edit_category(category_id):
         category = cursor.fetchone()
         cursor.close()
         conn.close()
+        if not category:
+            flash('Category not found', 'danger')
+            return redirect(url_for('category_report'))
+        
         if request.method == 'POST':
             category_type = request.form['category_type']
             description = request.form['description']
-            image = request.files['image']
+            image = request.files.get('image')  # Optional image
+            image_filename = category['image']  # Keep existing image
             upload_folder = os.path.join(app.root_path, 'static', 'upload')
             os.makedirs(upload_folder, exist_ok=True)
-            image_filename = image.filename
-            image.save(os.path.join(upload_folder, image_filename))
+            if image and image.filename:
+                image_filename = image.filename
+                image.save(os.path.join(upload_folder, image_filename))
+            
             conn = get_db_connection()
             if conn is None:
                 logger.error("Edit category: No DB connection")
                 flash('Database connection failed', 'danger')
                 return redirect(url_for('category_report'))
             try:
-                cursor = conn.cursor(dictionary=True)
+                cursor = conn.cursor()
                 cursor.execute(
                     'UPDATE categories SET category_type = %s, description = %s, image = %s WHERE category_id = %s',
                     (category_type, description, image_filename, category_id)
@@ -1036,7 +1020,7 @@ def edit_category(category_id):
             except mysql.connector.Error as e:
                 logger.error(f"Edit category failed: {e.errno} - {str(e)}")
                 conn.close()
-                flash('Database error', 'danger')
+                flash(f'Error updating category: {str(e)}', 'danger')
                 return redirect(url_for('category_report'))
         return render_template('add_category.html', category=category)
     except mysql.connector.Error as e:
@@ -1058,17 +1042,22 @@ def delete_category(category_id):
         return redirect(url_for('category_report'))
     
     try:
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
+        # Delete dependent products first
+        cursor.execute('DELETE FROM cart WHERE product_id IN (SELECT product_id FROM products WHERE category_id = %s)', (category_id,))
+        cursor.execute('DELETE FROM orderitems WHERE product_id IN (SELECT product_id FROM products WHERE category_id = %s)', (category_id,))
+        cursor.execute('DELETE FROM products WHERE category_id = %s', (category_id,))
+        # Now delete category
         cursor.execute('DELETE FROM categories WHERE category_id = %s', (category_id,))
         conn.commit()
         cursor.close()
         conn.close()
-        flash('Category deleted successfully', 'success')
+        flash('Category and related products deleted successfully', 'success')
         return redirect(url_for('category_report'))
     except mysql.connector.Error as e:
         logger.error(f"Delete category failed: {e.errno} - {str(e)}")
         conn.close()
-        flash('Database error', 'danger')
+        flash(f'Error deleting category: {str(e)}', 'danger')
         return redirect(url_for('category_report'))
 
 @app.route('/category/<int:category_id>')
@@ -1105,11 +1094,14 @@ def add_company():
     if request.method == 'POST':
         company_name = request.form['company_name']
         description = request.form['description']
-        image = request.files['image']
+        image = request.files.get('image')  # Optional image
+        image_filename = None
         upload_folder = os.path.join(app.root_path, 'static', 'upload')
         os.makedirs(upload_folder, exist_ok=True)
-        image_filename = image.filename
-        image.save(os.path.join(upload_folder, image_filename))
+        if image and image.filename:
+            image_filename = image.filename
+            image.save(os.path.join(upload_folder, image_filename))
+        
         conn = get_db_connection()
         if conn is None:
             logger.error("Add company: No DB connection")
@@ -1117,7 +1109,7 @@ def add_company():
             return redirect(url_for('company_report'))
         
         try:
-            cursor = conn.cursor(dictionary=True)
+            cursor = conn.cursor()
             cursor.execute(
                 'INSERT INTO brands (name, description, image) VALUES (%s, %s, %s)',
                 (company_name, description, image_filename)
@@ -1130,7 +1122,7 @@ def add_company():
         except mysql.connector.Error as e:
             logger.error(f"Add company failed: {e.errno} - {str(e)}")
             conn.close()
-            flash('Database error', 'danger')
+            flash(f'Error adding company: {str(e)}', 'danger')
             return redirect(url_for('company_report'))
     return render_template('add_company.html', edit=False)
 
@@ -1152,21 +1144,28 @@ def edit_company(company_id):
         company = cursor.fetchone()
         cursor.close()
         conn.close()
+        if not company:
+            flash('Company not found', 'danger')
+            return redirect(url_for('company_report'))
+        
         if request.method == 'POST':
             company_name = request.form['company_name']
             description = request.form['description']
-            image = request.files['image']
+            image = request.files.get('image')  # Optional image
+            image_filename = company['image']  # Keep existing image
             upload_folder = os.path.join(app.root_path, 'static', 'upload')
             os.makedirs(upload_folder, exist_ok=True)
-            image_filename = image.filename
-            image.save(os.path.join(upload_folder, image_filename))
+            if image and image.filename:
+                image_filename = image.filename
+                image.save(os.path.join(upload_folder, image_filename))
+            
             conn = get_db_connection()
             if conn is None:
                 logger.error("Edit company: No DB connection")
                 flash('Database connection failed', 'danger')
                 return redirect(url_for('company_report'))
             try:
-                cursor = conn.cursor(dictionary=True)
+                cursor = conn.cursor()
                 cursor.execute(
                     'UPDATE brands SET name = %s, description = %s, image = %s WHERE brand_id = %s',
                     (company_name, description, image_filename, company_id)
@@ -1179,7 +1178,7 @@ def edit_company(company_id):
             except mysql.connector.Error as e:
                 logger.error(f"Edit company failed: {e.errno} - {str(e)}")
                 conn.close()
-                flash('Database error', 'danger')
+                flash(f'Error updating company: {str(e)}', 'danger')
                 return redirect(url_for('company_report'))
         return render_template('add_company.html', company=company, edit=True)
     except mysql.connector.Error as e:
@@ -1231,22 +1230,20 @@ def delete_company(company_id):
         return redirect(url_for('company_report'))
     
     try:
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute('SELECT product_id FROM products WHERE brand_id = %s', (company_id,))
-        product_ids = cursor.fetchall()
-        for product_id in product_ids:
-            cursor.execute('DELETE FROM cart WHERE product_id = %s', (product_id['product_id'],))
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM cart WHERE product_id IN (SELECT product_id FROM products WHERE brand_id = %s)', (company_id,))
+        cursor.execute('DELETE FROM orderitems WHERE product_id IN (SELECT product_id FROM products WHERE brand_id = %s)', (company_id,))
         cursor.execute('DELETE FROM products WHERE brand_id = %s', (company_id,))
         cursor.execute('DELETE FROM brands WHERE brand_id = %s', (company_id,))
         conn.commit()
         cursor.close()
         conn.close()
-        flash('Company deleted successfully', 'success')
+        flash('Company and related products deleted successfully', 'success')
         return redirect(url_for('company_report'))
     except mysql.connector.Error as e:
         logger.error(f"Delete company failed: {e.errno} - {str(e)}")
         conn.close()
-        flash('Database error', 'danger')
+        flash(f'Error deleting company: {str(e)}', 'danger')
         return redirect(url_for('company_report'))
 
 # Admin product management
@@ -1264,34 +1261,37 @@ def add_product():
     
     try:
         cursor = conn.cursor(dictionary=True)
-        cursor.execute('SELECT * FROM brands')
+        cursor.execute('SELECT brand_id, name FROM brands')
         companies = cursor.fetchall()
-        cursor.execute('SELECT * FROM categories')
+        cursor.execute('SELECT category_id, category_type FROM categories')
         categories = cursor.fetchall()
         cursor.close()
         conn.close()
         if request.method == 'POST':
             product_name = request.form['product_name']
-            company_id = request.form['company']
-            product_type = request.form['product_type']
+            brand_id = request.form['company']
+            category_id = request.form['category_id']  # Changed from product_type
             cost = request.form['cost']
             description = request.form['description']
-            image = request.files['image']
-            upload_folder = os.path.join('static', 'upload')
+            image = request.files.get('image')  # Optional image
+            image_filename = None
+            upload_folder = os.path.join(app.root_path, 'static', 'upload')
             os.makedirs(upload_folder, exist_ok=True)
-            image_filename = image.filename
-            image.save(os.path.join(upload_folder, image_filename))
+            if image and image.filename:
+                image_filename = image.filename
+                image.save(os.path.join(upload_folder, image_filename))
+            
             conn = get_db_connection()
             if conn is None:
                 logger.error("Add product: No DB connection")
                 flash('Database connection failed', 'danger')
                 return redirect(url_for('admin_dashboard'))
             try:
-                cursor = conn.cursor(dictionary=True)
+                cursor = conn.cursor()
                 cursor.execute(
-                    'INSERT INTO products (product_name, company, product_type, cost, description, image, category_id, brand_id) '
-                    'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
-                    (product_name, company_id, product_type, cost, description, image_filename, product_type, company_id)
+                    'INSERT INTO products (product_name, cost, description, image, category_id, brand_id) '
+                    'VALUES (%s, %s, %s, %s, %s, %s)',
+                    (product_name, cost, description, image_filename, category_id, brand_id)
                 )
                 conn.commit()
                 cursor.close()
@@ -1301,9 +1301,9 @@ def add_product():
             except mysql.connector.Error as e:
                 logger.error(f"Add product failed: {e.errno} - {str(e)}")
                 conn.close()
-                flash('Database error', 'danger')
+                flash(f'Error adding product: {str(e)}', 'danger')
                 return redirect(url_for('admin_dashboard'))
-        return render_template('add_product.html', companies=companies, categories=categories)
+        return render_template('add_product.html', companies=companies, categories=categories, product=None, edit=False)
     except mysql.connector.Error as e:
         logger.error(f"Fetch brands/categories failed: {e.errno} - {str(e)}")
         conn.close()
@@ -1329,7 +1329,14 @@ def product_report():
         cursor.execute('SELECT COUNT(*) FROM products')
         total_products = cursor.fetchone()['COUNT(*)']
         total_pages = (total_products + per_page - 1) // per_page
-        cursor.execute('SELECT * FROM products LIMIT %s OFFSET %s', (per_page, (page - 1) * per_page))
+        cursor.execute(
+            'SELECT p.*, c.category_type, b.name AS brand_name '
+            'FROM products p '
+            'JOIN categories c ON p.category_id = c.category_id '
+            'JOIN brands b ON p.brand_id = b.brand_id '
+            'LIMIT %s OFFSET %s',
+            (per_page, (page - 1) * per_page)
+        )
         products = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -1362,27 +1369,35 @@ def edit_product(product_id):
         categories = cursor.fetchall()
         cursor.close()
         conn.close()
+        if not product:
+            flash('Product not found', 'danger')
+            return redirect(url_for('product_report'))
+        
         if request.method == 'POST':
             product_name = request.form['product_name']
-            company_id = request.form['company']
-            product_type = request.form['product_type']
+            brand_id = request.form['company']
+            category_id = request.form['category_id']  # Changed from product_type
             cost = request.form['cost']
             description = request.form['description']
-            image = request.files['image']
+            image = request.files.get('image')  # Optional image
+            image_filename = product['image']  # Keep existing image
             upload_folder = os.path.join(app.root_path, 'static', 'upload')
             os.makedirs(upload_folder, exist_ok=True)
-            image_filename = image.filename
-            image.save(os.path.join(upload_folder, image_filename))
+            if image and image.filename:
+                image_filename = image.filename
+                image.save(os.path.join(upload_folder, image_filename))
+            
             conn = get_db_connection()
             if conn is None:
                 logger.error("Edit product: No DB connection")
                 flash('Database connection failed', 'danger')
                 return redirect(url_for('product_report'))
             try:
-                cursor = conn.cursor(dictionary=True)
+                cursor = conn.cursor()
                 cursor.execute(
-                    'UPDATE products SET product_name = %s, company = %s, product_type = %s, cost = %s, description = %s, image = %s WHERE product_id = %s',
-                    (product_name, company_id, product_type, cost, description, image_filename, product_id)
+                    'UPDATE products SET product_name = %s, cost = %s, description = %s, image = %s, category_id = %s, brand_id = %s '
+                    'WHERE product_id = %s',
+                    (product_name, cost, description, image_filename, category_id, brand_id, product_id)
                 )
                 conn.commit()
                 cursor.close()
@@ -1392,7 +1407,7 @@ def edit_product(product_id):
             except mysql.connector.Error as e:
                 logger.error(f"Edit product failed: {e.errno} - {str(e)}")
                 conn.close()
-                flash('Database error', 'danger')
+                flash(f'Error updating product: {str(e)}', 'danger')
                 return redirect(url_for('product_report'))
         return render_template('add_product.html', product=product, companies=companies, categories=categories, edit=True)
     except mysql.connector.Error as e:
@@ -1415,7 +1430,9 @@ def delete_product(product_id):
     
     try:
         cursor = conn.cursor()
-        cursor.execute('DELETE FROM products WHERE product_id = %s', (product_id,))
+        cursor.execute('DELETE FROM cart WHERE product_id = %s', (product_id,))
+        cursor.execute('DELETE FROM orderitems WHERE product_id = %s', (product_id,))
+        cursor.execute('DELETE FROM products WHERE product_id = %s', (Rqproduct_id,))
         conn.commit()
         cursor.close()
         conn.close()
@@ -1424,7 +1441,7 @@ def delete_product(product_id):
     except mysql.connector.Error as e:
         logger.error(f"Delete product failed: {e.errno} - {str(e)}")
         conn.close()
-        flash('Database error', 'danger')
+        flash(f'Error deleting product: {str(e)}', 'danger')
         return redirect(url_for('product_report'))
 
 @app.route('/user_report')
@@ -1477,6 +1494,8 @@ def delete_user(user_id):
     try:
         cursor = conn.cursor()
         cursor.execute('DELETE FROM cart WHERE user_id = %s', (user_id,))
+        cursor.execute('DELETE FROM orderitems WHERE order_id IN (SELECT order_id FROM orders WHERE user_id = %s)', (user_id,))
+        cursor.execute('DELETE FROM orders WHERE user_id = %s', (user_id,))
         cursor.execute('DELETE FROM user_info WHERE user_id = %s', (user_id,))
         cursor.execute('DELETE FROM users WHERE user_id = %s', (user_id,))
         conn.commit()
@@ -1487,7 +1506,7 @@ def delete_user(user_id):
     except mysql.connector.Error as e:
         logger.error(f"Delete user failed: {e.errno} - {str(e)}")
         conn.close()
-        flash('Database error', 'danger')
+        flash(f'Error deleting user: {str(e)}', 'danger')
         return redirect(url_for('user_report'))
 
 if __name__ == '__main__':
