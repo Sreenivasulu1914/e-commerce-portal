@@ -8,12 +8,15 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import random
 import logging
+from flask_cors import CORS
+from mysql.connector import Error
 import requests
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your_secret_key')
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+CORS(app, resources={r"/api/*": {"origins": ["http://192.168.195.150:5000", "http://127.0.0.1:5000"]}})
 
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -181,6 +184,62 @@ def contact_us():
             flash(f'Error sending message: {str(e)}', 'danger')
         return redirect(url_for('contact_us'))
     return render_template('contact_us.html')
+
+
+
+
+
+
+
+
+
+
+
+# ... your get_db_connection() and other routes ...
+
+@app.route('/api/admin_stats')
+def admin_stats():
+    conn = get_db_connection()
+    if conn is None:
+        print("DB connection failed")
+        return jsonify({'products': 0, 'categories': 0, 'companies': 0, 'orders': 0}), 500
+
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute('SELECT COUNT(*) AS count FROM products')
+        products = cursor.fetchone()['count']
+        cursor.execute('SELECT COUNT(*) AS count FROM categories')
+        categories = cursor.fetchone()['count']
+        cursor.execute('SELECT COUNT(*) AS count FROM brands')  # Adjusted to 'companies'
+        companies = cursor.fetchone()['count']
+        cursor.execute('SELECT COUNT(*) AS count FROM orders')
+        orders = cursor.fetchone()['count']
+        cursor.close()
+        conn.close()
+        print(f"Stats fetched: products={products}, categories={categories}, companies={companies}, orders={orders}")
+        return jsonify({
+            'products': products,
+            'categories': categories,
+            'companies': companies,
+            'orders': orders
+        })
+    except Error as e:
+        print(f"DB error: {e}")
+        cursor.close()
+        conn.close()
+        return jsonify({'products': 0, 'categories': 0, 'companies': 0, 'orders': 0}), 500
+
+# ... rest of your routes ...
+
+
+
+
+
+
+
+
+
+
 
 @app.route('/logout')
 def logout():
@@ -640,28 +699,23 @@ def create_checkout_session():
 # API routes
 @app.route('/api/products')
 def api_products():
-    search_query = request.args.get('search', '')
-    limit = request.args.get('limit', type=int)
+    query = request.args.get('search', '')
+    category = request.args.get('category', '')
     conn = get_db_connection()
     if conn is None:
         logger.error("Products: No DB connection")
         return jsonify({'error': 'Database connection failed'}), 500
-    
     try:
         cursor = conn.cursor(dictionary=True)
-        if search_query:
-            query = 'SELECT * FROM products WHERE product_name LIKE %s OR description LIKE %s'
-            params = (f'%{search_query}%', f'%{search_query}%')
-            if limit:
-                query += ' LIMIT %s'
-                params += (limit,)
-        else:
-            query = 'SELECT * FROM products'
-            params = ()
-            if limit:
-                query += ' LIMIT %s'
-                params = (limit,)
-        cursor.execute(query, params)
+        sql = 'SELECT product_id, product_name, description, image FROM products WHERE 1=1'
+        params = []
+        if query:
+            sql += ' AND product_name LIKE %s'
+            params.append(f'%{query}%')
+        if category:
+            sql += ' AND category_id = %s'
+            params.append(category)
+        cursor.execute(sql, params)
         products = cursor.fetchall()
         cursor.close()
         conn.close()

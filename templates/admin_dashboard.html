@@ -1,26 +1,256 @@
 {% extends "base.html" %}
 
-{% block title %}About Us{% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
+<!-- Header: Personalized and clean -->
+<section class="bg-light py-4">
+    <div class="container">
+        <h1 class="display-5 fw-bold">
+            <i class="fas fa-tachometer-alt me-2 text-primary"></i> Admin Dashboard
+        </h1>
+        <p class="lead">Welcome, {{ session.get('username', 'Admin') }}! Take control of your store.</p>
+    </div>
+</section>
 
+<!-- Dashboard Layout -->
+<div class="container-fluid my-5">
+    <div class="row">
+        <!-- Sidebar: Grouped navigation -->
+        <nav class="col-md-3 col-lg-2 bg-white shadow-sm p-3">
+            <h4 class="mb-4"><i class="fas fa-tools me-2"></i> Admin Menu</h4>
+            <div class="accordion" id="adminMenu">
+                <!-- Add Actions -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#addMenu" aria-expanded="true" aria-controls="addMenu">
+                            <i class="fas fa-plus-circle me-2"></i> Add Content
+                        </button>
+                    </h2>
+                    <div id="addMenu" class="accordion-collapse collapse show" data-bs-parent="#adminMenu">
+                        <div class="accordion-body p-0">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <a href="{{ url_for('add_category') }}" class="text-decoration-none text-dark">
+                                        <i class="fas fa-tags me-2"></i> Add Category
+                                    </a>
+                                </li>
+                                <li class="list-group-item">
+                                    <a href="{{ url_for('add_company') }}" class="text-decoration-none text-dark">
+                                        <i class="fas fa-building me-2"></i> Add Company
+                                    </a>
+                                </li>
+                                <li class="list-group-item">
+                                    <a href="{{ url_for('add_product') }}" class="text-decoration-none text-dark">
+                                        <i class="fas fa-shopping-bag me-2"></i> Add Product
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- Reports -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#reportMenu" aria-expanded="false" aria-controls="reportMenu">
+                            <i class="fas fa-chart-bar me-2"></i> Reports
+                        </button>
+                    </h2>
+                    <div id="reportMenu" class="accordion-collapse collapse" data-bs-parent="#adminMenu">
+                        <div class="accordion-body p-0">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <a href="{{ url_for('category_report') }}" class="text-decoration-none text-dark">
+                                        <i class="fas fa-tags me-2"></i> Category Report
+                                    </a>
+                                </li>
+                                <li class="list-group-item">
+                                    <a href="{{ url_for('product_report') }}" class="text-decoration-none text-dark">
+                                        <i class="fas fa-shopping-bag me-2"></i> Product Report
+                                    </a>
+                                </li>
+                                <li class="list-group-item">
+                                    <a href="{{ url_for('company_report') }}" class="text-decoration-none text-dark">
+                                        <i class="fas fa-building me-2"></i> Company Report
+                                    </a>
+                                </li>
+                                <li class="list-group-item">
+                                    <a href="{{ url_for('all_orders_report') }}" class="text-decoration-none text-dark">
+                                        <i class="fas fa-shopping-cart me-2"></i> Orders Report
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- Account -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accountMenu" aria-expanded="false" aria-controls="accountMenu">
+                            <i class="fas fa-user-cog me-2"></i> Account
+                        </button>
+                    </h2>
+                    <div id="accountMenu" class="accordion-collapse collapse" data-bs-parent="#adminMenu">
+                        <div class="accordion-body p-0">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <a href="{{ url_for('change_password') }}" class="text-decoration-none text-dark">
+                                        <i class="fas fa-key me-2"></i> Change Password
+                                    </a>
+                                </li>
+                                <li class="list-group-item">
+                                    <a href="{{ url_for('logout') }}" class="text-decoration-none text-dark">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Home Link -->
+            <hr>
+            <a href="{{ url_for('index') }}" class="btn btn-outline-primary w-100">
+                <i class="fas fa-house me-2"></i> Back to Home
+            </a>
+        </nav>
 
+        <!-- Main Content -->
+        <main class="col-md-9 col-lg-10 px-4">
+            <!-- Stats -->
+            <section class="mb-5">
+                <h3 class="mb-4">Store Overview</h3>
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm text-center ">
+                            <div class="card-body">
+                                <i class="fas fa-shopping-bag fa-2x mb-3 text-primary"></i>
+                                <h5 class="card-title">Products</h5>
+                                <h3 class="fw-bold text-primary" id="product-count">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm text-center">
+                            <div class="card-body">
+                                <i class="fas fa-tags fa-2x mb-3 text-primary"></i>
+                                <h5 class="card-title">Categories</h5>
+                                <h3 class="fw-bold text-primary" id="category-count">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm text-center">
+                            <div class="card-body">
+                                <i class="fas fa-building fa-2x mb-3 text-primary"></i>
+                                <h5 class="card-title">Companies</h5>
+                                <h3 class="fw-bold text-primary" id="company-count">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm text-center">
+                            <div class="card-body">
+                                <i class="fas fa-shopping-cart fa-2x mb-3 text-primary"></i>
+                                <h5 class="card-title">Orders</h5>
+                                <h3 class="fw-bold text-primary" id="order-count">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-
-<h2 class="head_of_page"> <img src="{{ url_for('static', filename='images/settings.png') }}" style="height: 50px;width: 60px;">&nbsp;&nbsp;Admin Dashboard</h2>
-<!-- Admin Dashboard -->
-<div class="container mt-5">
-
-    <ul class="list-group lgroup">
-        <li class="list-group-item lgi"><a href="{{ url_for('index') }}" class=" user-link "><i class="bi bi-house-fill"></i> Home</a></li>
-        <li class="list-group-item lgi"><a href="{{ url_for('add_category') }}" class=" user-link"> <i class="bi bi-bag-plus-fill"></i> Add Category</a></li>
-        <li class="list-group-item lgi"> <a href="{{ url_for('add_company') }}" class=" user-link"><i class="bi bi-building-fill-add"></i> Add Company</a></li>
-        <li class="list-group-item lgi" > <a href="{{ url_for('add_product') }}" class=" user-link"><i class="bi bi-plus-circle-fill"></i> Add Product</a></li>
-        <li class="list-group-item lgi"><a href="{{ url_for('category_report') }}" class=" user-link">Category Report</a></li>
-        <li class="list-group-item lgi"> <a href="{{ url_for('product_report') }}" class=" user-link">Product Report</a></li>
-       <li class="list-group-item lgi" > <a href="{{ url_for('company_report') }}" class=" user-link">Company Report</a></li>
-       <li class="list-group-item lgi"><a href="{{ url_for('change_password') }}" class=" user-link">Change Password</a></li>
-        <li class="list-group-item lgi"><a href="{{ url_for('logout') }}" class="user-link">Logout</a></li>
-    </ul>
+            <!-- Quick Actions -->
+            <section class="mb-5">
+                <h3 class="mb-4">Quick Actions</h3>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <a href="{{ url_for('add_product') }}" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-shopping-bag me-2"></i> Add Product
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ url_for('product_report') }}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="fas fa-chart-bar me-2"></i> Product Report
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ url_for('all_orders_report') }}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="fas fa-shopping-cart me-2"></i> Orders Report
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 </div>
+
+<!-- Stats Script -->
+<!-- Stats Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Fetching stats...');
+        fetch('/api/admin_stats')  // Changed to relative URL
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                console.log('Stats received:', data);
+                document.getElementById('product-count').textContent = data.products || 0;
+                document.getElementById('category-count').textContent = data.categories || 0;
+                document.getElementById('company-count').textContent = data.companies || 0;
+                document.getElementById('order-count').textContent = data.orders || 0;
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                document.querySelectorAll('.card-body h3').forEach(el => el.textContent = 'N/A');
+            });
+    });
+</script>
+
+<style>
+    /* Sidebar */
+    .accordion-button {
+        font-weight: 500;
+        color: #007bff;
+    }
+    .accordion-button:not(.collapsed) {
+        background-color: #e7f1ff;
+        color: #0056b3;
+    }
+    .list-group-item a {
+        transition: color 0.3s ease;
+    }
+    .list-group-item a:hover {
+        color: #0056b3;
+    }
+
+    /* Cards and Buttons */
+    .card, .btn {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover, .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    .btn-outline-primary:hover {
+        background-color: #e7f1ff;
+        color: #0056b3;
+    }
+
+    /* Responsive */
+    @media (max-width: 991px) {
+        .col-lg-2 {
+            display: none;
+        }
+        .col-lg-10 {
+            width: 100%;
+        }
+    }
+</style>
 {% endblock %}

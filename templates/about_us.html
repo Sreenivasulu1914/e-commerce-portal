@@ -1,17 +1,214 @@
 {% extends "base.html" %}
 
-{% block title %}About Us{% endblock %}
+{% block title %}About Us - E-Commerce Portal{% endblock %}
 
 {% block content %}
-<h1 class="head_of_page"> <img src="{{ url_for('static', filename='images/info.png') }}" style="height: 50px;width: 60px;">&nbsp;About Us</h1>
-<div class="container" style="justify-content: center;">
-    <h4>Welcome to E-commerce</h4>
-    <p>At E-Commerce, we are passionate about providing you with the best online shopping experience. Our mission is to offer a wide variety of high-quality products at competitive prices, all while delivering exceptional customer service.</p>
-    <h4>Our Story</h4>
-    <p>Founded in [Year], [Your Company Name] started with a simple idea: to make shopping easier and more convenient for everyone. We began as a small business with a vision to create an online platform where customers could find everything they need in one place. Over the years, we have grown and expanded our product range, but our core values have remained the same.</p>
-    <h4>What We Offer</h4>
-    <ul>
-        <li><span style="font-size: large;">Diverse Product Range:</span> From fashion and electronics to home goods and beauty products, our extensive catalog ensures that you can find exactly what you’re looking for.</li>
-    </ul>
-</div>
+<!-- Hero Section: Engaging header with image and CTA -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 animate__animated animate__fadeInLeft">
+                <h1 class="display-4 fw-bold"><i class="fas fa-info-circle me-2 text-primary"></i> About Us</h1>
+                <p class="lead">Discover the heart behind your favorite online shop—where quality meets passion.</p>
+                <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg mt-3 animate__animated animate__pulse animate__infinite">Shop Now</a>
+            </div>
+            <div class="col-md-6">
+                <img src="{{ url_for('static', filename='images/about-hero.jpg') }}" class="img-fluid rounded shadow-sm animate__animated animate__fadeInRight" alt="Our Team at Work" style="max-height: 400px; object-fit: cover;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Mission: Clear, concise, with icon -->
+<section class="container my-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2 text-center">
+            <h2 class="mb-4 animate__animated animate__fadeInUp"><i class="fas fa-rocket me-2 text-primary"></i> Our Mission</h2>
+            <p class="lead">At E-Commerce Portal, we’re on a mission to make shopping effortless, affordable, and joyful. We curate top-quality products from trusted brands, ensuring you find exactly what you love, every time.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Our Story: Visual timeline -->
+<section class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 animate__animated animate__fadeInUp">Our Journey</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm hover-scale">
+                    <div class="card-body text-center">
+                        <i class="fas fa-seedling fa-3x mb-3 text-primary"></i>
+                        <h5 class="card-title">2020: The Beginning</h5>
+                        <p class="card-text">Founded with a vision to simplify online shopping, we launched with 100 products and a small, passionate team.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm hover-scale">
+                    <div class="card-body text-center">
+                        <i class="fas fa-store fa-3x mb-3 text-primary"></i>
+                        <h5 class="card-title">2022: Expansion</h5>
+                        <p class="card-text">Grew to 10,000+ products, partnered with top brands, and introduced fast shipping across India.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm hover-scale">
+                    <div class="card-body text-center">
+                        <i class="fas fa-heart fa-3x mb-3 text-primary"></i>
+                        <h5 class="card-title">Today: Your Trusted Shop</h5>
+                        <p class="card-text">Serving 50,000+ happy customers with a seamless platform built on trust and innovation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Values: Icon-driven cards -->
+<section class="container my-5">
+    <h2 class="text-center mb-5 animate__animated animate__fadeInUp">What We Stand For</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm hover-scale">
+                <div class="card-body text-center">
+                    <i class="fas fa-star fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Quality First</h5>
+                    <p class="card-text">We handpick every product to ensure top-notch quality and durability.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm hover-scale">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Customer Love</h5>
+                    <p class="card-text">Your happiness is our priority, with 24/7 support and hassle-free returns.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm hover-scale">
+                <div class="card-body text-center">
+                    <i class="fas fa-bolt fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Innovation</h5>
+                    <p class="card-text">We use cutting-edge tech to make your shopping fast and secure.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Meet the Team: Humanize the brand -->
+<section class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 animate__animated animate__fadeInUp">Meet Our Team</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm hover-scale">
+                    <img src="{{ url_for('static', filename='images/team1.jpg') }}" class="card-img-top" alt="Team Member 1" style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Sreenivasulu</h5>
+                        <p class="card-text text-muted">Founder & CEO</p>
+                        <p class="card-text">Passionate about building a platform that makes shopping a breeze.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm hover-scale">
+                    <img src="{{ url_for('static', filename='images/team2.jpg') }}" class="card-img-top" alt="Team Member 2" style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Priya Sharma</h5>
+                        <p class="card-text text-muted">Head of Operations</p>
+                        <p class="card-text">Ensures your orders arrive fast and flawless.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm hover-scale">
+                    <img src="{{ url_for('static', filename='images/team3.jpg') }}" class="card-img-top" alt="Team Member 3" style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Rahul Patel</h5>
+                        <p class="card-text text-muted">Tech Lead</p>
+                        <p class="card-text">Keeps our platform smooth and secure.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA: Drive action -->
+<section class="container my-5 text-center">
+    <h2 class="mb-4 animate__animated animate__fadeInUp">Ready to Shop?</h2>
+    <p class="lead mb-4">Join thousands of happy customers and explore our curated collections today.</p>
+    <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg animate__animated animate__pulse animate__infinite">Start Shopping</a>
+    <a href="{{ url_for('contact_us') }}" class="btn btn-outline-primary btn-lg ms-3">Get in Touch</a>
+</section>
+
+<!-- Trust Signals: Build credibility -->
+<section class="bg-light py-4">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-md-3">
+                <h4 class="fw-bold text-primary">50K+</h4>
+                <p>Happy Customers</p>
+            </div>
+            <div class="col-md-3">
+                <h4 class="fw-bold text-primary">10K+</h4>
+                <p>Products</p>
+            </div>
+            <div class="col-md-3">
+                <h4 class="fw-bold text-primary">100+</h4>
+                <p>Trusted Brands</p>
+            </div>
+            <div class="col-md-3">
+                <h4 class="fw-bold text-primary">24/7</h4>
+                <p>Support</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Hover Effects */
+    .hover-scale {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-scale:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* Button Styling */
+    .btn-primary {
+        transition: background-color 0.3s ease;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    /* Section Spacing */
+    section {
+        padding: 3rem 0;
+    }
+
+    /* Responsive Images */
+    .card-img-top {
+        transition: transform 0.3s ease;
+    }
+    .card-img-top:hover {
+        transform: scale(1.05);
+    }
+
+    /* Mobile Adjustments */
+    @media (max-width: 768px) {
+        .display-4 {
+            font-size: 2.5rem;
+        }
+        section {
+            padding: 2rem 0;
+        }
+    }
+</style>
 {% endblock %}
