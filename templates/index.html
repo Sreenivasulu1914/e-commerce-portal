@@ -3,145 +3,239 @@
 {% block title %}Home Page{% endblock %}
 
 {% block content %}
-    <hr>
-    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-        <ol class="carousel-indicators">
-            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-        </ol>
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <div class="row no-gutters carousel-body">
-                    <div class="col-md-4">
-                        <div class="carousel-caption d-none d-md-block carousel-caption-top" style="color: black;">
-                            <h2 style="background-color: blue; color:white;text-align: center;">New Arrival</h2>
-                            <h3 style="background-color: black;color:white;text-align: center;"> Get the latest products</h3>
-                            <p> Get the latest fashion trends at affordable prices</p>
-                            <button style="justify-content: left;" class="btn btn-primary btn-left">Learn more </button>
-                        </div>
-                    </div>
-                    <div class="col-md-8">
-                        <img src="{{ url_for('static', filename='images/banner5.jpg') }}" class="d-block w-100 carousel_img" alt="First slide">
+<hr>
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="row no-gutters carousel-body">
+                <div class="col-md-4">
+                    <div class="carousel-caption d-none d-md-block carousel-caption-top" style="color: black;">
+                        <h2 style="background-color: blue; color:white;text-align: center;">New Arrival</h2>
+                        <h3 style="background-color: black;color:white;text-align: center;"> Get the latest products
+                        </h3>
+                        <p> Get the latest fashion trends at affordable prices</p>
+                        <button style="justify-content: left;" class="btn btn-primary btn-left">Learn more </button>
                     </div>
                 </div>
-            </div>
-            <div class="carousel-item">
-                <div class="row no-gutters">
-                    <div class="col-md-4">
-                        <div class="carousel-caption d-none d-md-block carousel-caption-top" style="color: black;">
-                            <h2 style="background-color:blue;color:white;text-align: center;"> Best Sellers</h2>
-                            <h3 style="background-color:black;color:white;text-align: center;"> Get the best products</h3>
-                            <p> Get the best fashion trends at affordable prices</p>
-                            <button style="justify-content: left;" class="btn btn-primary btn-left">Learn more </button>
-                        </div>
-                    </div>
-                    <div class="col-md-8">
-                        <img src="{{ url_for('static', filename='images/banner2.gif') }}" class="d-block w-100 carousel_img" alt="Second slide">
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="row no-gutters">
-                    <div class="col-md-4">
-                        <div class="carousel-caption carousel-caption-top d-none d-md-block">
-                            <h2 style="background-color:blue;color:white;text-align: center;">E-Commerce Portal </h2>
-                            <h3 style="background-color: black; color:white;text-align: center;">E-Commerce</h3>
-                            <p style="color:black">one stop solution for all your shopping needs</p>
-                            <button style="justify-content: left;" class="btn btn-primary btn-left">Learn more </button>
-                        </div>
-                    </div>
-                    <div class="col-md-8">
-                        <img src="{{ url_for('static', filename='images/banner3.jpg') }}" class="d-block w-100 carousel_img" alt="Third slide">
-                    </div>
+                <div class="col-md-8">
+                    <img src="{{ url_for('static', filename='images/banner5.jpg') }}" class="d-block w-100 carousel_img"
+                        alt="First slide">
                 </div>
             </div>
         </div>
-        <!-- <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a> -->
+        <div class="carousel-item">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <div class="carousel-caption d-none d-md-block carousel-caption-top" style="color: black;">
+                        <h2 style="background-color:blue;color:white;text-align: center;"> Best Sellers</h2>
+                        <h3 style="background-color:black;color:white;text-align: center;"> Get the best products</h3>
+                        <p> Get the best fashion trends at affordable prices</p>
+                        <button style="justify-content: left;" class="btn btn-primary btn-left">Learn more </button>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <img src="{{ url_for('static', filename='images/banner2.gif') }}" class="d-block w-100 carousel_img"
+                        alt="Second slide">
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <div class="carousel-caption carousel-caption-top d-none d-md-block">
+                        <h2 style="background-color:blue;color:white;text-align: center;">E-Commerce Portal </h2>
+                        <h3 style="background-color: black; color:white;text-align: center;">E-Commerce</h3>
+                        <p style="color:black">one stop solution for all your shopping needs</p>
+                        <button style="justify-content: left;" class="btn btn-primary btn-left">Learn more </button>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <img src="{{ url_for('static', filename='images/banner3.jpg') }}" class="d-block w-100 carousel_img"
+                        alt="Third slide">
+                </div>
+            </div>
+        </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
 
-    <hr>
-        <br>
-    <div class="row container-fluid">
+<hr>
+<br>  <!-- Feature Cards: Interactive, icon-driven, with clear CTAs -->
+<section class="container my-5">
+    <h3 class="text-center mb-4 animate__animated animate__fadeInUp">Why Shop With Us?</h3>
+    <div class="row g-4">
         <div class="col-md-3">
-            <h4 > <img src="{{ url_for('static', filename='images/profile.png') }}" style="height:50px;width:40px">  User Management</h4>
-            <p>User management ensures secure access and personalized experiences for e-commerce users</p>
-            <a href="">Learn more</a>
+            <div class="card h-100 shadow-sm hover-scale">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-cog fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">User Management</h5>
+                    <p class="card-text">Secure accounts and personalized shopping tailored to you.</p>
+                    <a href="{{ url_for('account_details') }}" class="btn btn-outline-primary">Learn More</a>
+                </div>
+            </div>
         </div>
-        <div  class="col-md-3">
-            <h4 > <img src="{{ url_for('static', filename='images/new-product.png') }}" style="height:50px;width:40px">  Product Managment</h4>
-            <p>
-                Product management streamlines adding, updating, and organizing products for a seamless e-commerce experience.</p>
-                <a href="">Learn more</a>
+        <div class="col-md-3">
+            <div class="card h-100 shadow-sm hover-scale">
+                <div class="card-body text-center">
+                    <i class="fas fa-shopping-bag fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Product Management</h5>
+                    <p class="card-text">Fresh, curated products updated daily for you.</p>
+                    <a href="{{ url_for('products') }}" class="btn btn-outline-primary">Explore Products</a>
+                </div>
+            </div>
         </div>
-        <div  class="col-md-3">
-            <h4 > <img src="{{ url_for('static', filename='images/ecommerce.png') }}" style="height:50px;width:40px">  E-Commerce Portal</h4>
-            <p>An e-commerce portal enables seamless online buying and selling of products of different companies and services.</p>
-            <a href="">Learn more</a>
+        <div class="col-md-3">
+            <div class="card h-100 shadow-sm hover-scale">
+                <div class="card-body text-center">
+                    <i class="fas fa-store fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">E-Commerce Portal</h5>
+                    <p class="card-text">Seamless shopping from top brands, all in one place.</p>
+                    <a href="{{ url_for('company') }}" class="btn btn-outline-primary">View Brands</a>
+                </div>
+            </div>
         </div>
-        <div  class="col-md-3">
-            <h4 > <img src="{{ url_for('static', filename='images/connection.png') }}" style="height:50px;width:40px">  With Latest Technology</h4>
-            <p>Latest technology drives innovation, efficiency, and enhanced user experiences in e-commerce.</p>
-            <a href="">Learn more</a>
+        <div class="col-md-3">
+            <div class="card h-100 shadow-sm hover-scale">
+                <div class="card-body text-center">
+                    <i class="fas fa-rocket fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Latest Technology</h5>
+                    <p class="card-text">Fast, secure, and cutting-edge shopping experience.</p>
+                    <a href="{{ url_for('about_us') }}" class="btn btn-outline-primary">Discover More</a>
+                </div>
+            </div>
         </div>
     </div>
-    <br>
-    <hr>
-    <h3 align="center">Latest Additions Products</h3>
-    <div class="container mt-5">
+</section>
+
+
+
+<hr>
+<h3 align="center">Latest Additions Products</h3>
+
+    <!-- Latest Products: Enhanced with loading state, hover effects, and View All -->
+    <section class="container my-5">
+        <h3 class="text-center mb-4 animate__animated animate__fadeInUp">Latest Products</h3>
         <div class="row" id="product-container">
-            <!-- Products will be dynamically inserted here -->
-            
+            <!-- Loading Spinner -->
+            <div class="col-12 text-center" id="loading-spinner">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
         </div>
-        
-    </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">View All Products</a>
+        </div>
+    </section>
 
-
+    <!-- Scripts and Styles -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const productContainer = document.getElementById('product-container');
+            const loadingSpinner = document.getElementById('loading-spinner');
+
             fetch('/api/products?limit=8')
                 .then(response => response.json())
                 .then(products => {
-                    const productContainer = document.getElementById('product-container');
+                    // Hide spinner
+                    loadingSpinner.style.display = 'none';
+                    
+                    if (products.length === 0) {
+                        productContainer.innerHTML = '<p class="text-center">No products found.</p>';
+                        return;
+                    }
+
                     products.forEach(product => {
                         const productCard = document.createElement('div');
-                        productCard.className = 'col-md-3 mt-4';
+                        productCard.className = 'col-md-3 col-sm-6 mb-4';
                         productCard.innerHTML = `
-                            <div class="card">
-                                <img src="/static/upload/${product.image}" class="card-img-top" alt="${product.product_name}">
+                            <div class="card h-100 shadow-sm hover-scale">
+                                <img src="/static/upload/${product.image || 'default.jpg'}" class="card-img-top" alt="${product.product_name}" style="height: 200px; object-fit: contain;">
                                 <div class="card-body">
                                     <h5 class="card-title">${product.product_name}</h5>
-                                    <p class="card-text">&#8377; ${product.cost}</p>
-                                    <a href="/view_product/${product.product_id}" class="btn btn-primary">View Product</a>
+                                    <p class="card-text text-primary fw-bold">₹ ${product.cost}</p>
+                                    <div class="d-flex justify-content-between">
+                                        <a href="/view_product/${product.product_id}" class="btn btn-outline-primary btn-sm">View</a>
+                                        <button class="btn btn-primary btn-sm add-to-cart" data-id="${product.product_id}">
+                                            <i class="fas fa-cart-plus"></i> Add to Cart
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         `;
                         productContainer.appendChild(productCard);
                     });
+
+                    // Add to Cart functionality
+                    document.querySelectorAll('.add-to-cart').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const productId = this.dataset.id;
+                            fetch(`/add_to_cart/${productId}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('Added to cart!');
+                                    // Optionally update cart count in nav
+                                } else {
+                                    alert('Please log in to add to cart.');
+                                    window.location.href = '/login';
+                                }
+                            });
+                        });
+                    });
+                })
+                .catch(error => {
+                    loadingSpinner.style.display = 'none';
+                    productContainer.innerHTML = '<p class="text-center text-danger">Failed to load products. Please try again.</p>';
+                    console.error('Error fetching products:', error);
                 });
         });
     </script>
 
-    <!-- <style>
-        /* Add this CSS to your stylesheet or within a <style> tag in your HTML file */
-        .carousel-caption {
-            opacity: 0;
-            transform: translateX(100%);
-            animation: slideIn 1s ease-in-out 1s forwards; /* 1s delay */
+    <style>
+
+
+        /* Card Hover Effect */
+        .hover-scale {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
         }
 
-        @keyframes slideIn {
-            to {
-                opacity: 1;
-                transform: translateX(0);
+        /* Button Hover */
+        .btn-primary {
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .carousel-caption-top {
+                text-align: center;
+                padding: 1rem;
+            }
+            .carousel-img {
+                height: 250px;
             }
         }
-    </style> -->
-
+    </style>
 {% endblock %}
