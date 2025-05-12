@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Animations</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+      padding: 50px;
+    }
+
+    img {
+      width: 200px;
+      margin: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Keyframe Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideInLeft {
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes scaleUp {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Applying Animations */
+    .img1 {
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    .img2 {
+      animation: slideInLeft 1.5s ease-out;
+    }
+
+    .img3 {
+      animation: scaleUp 1.2s ease-in;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Animated Images with Keyframes</h2>
+
+  <!-- Replace src with your own image URLs if needed -->
+  <img src="/static/images/sreenu_pic.jpg" alt="Fade In" class="img1" />
+  <img src="/static/images/Harini.jpg" alt="Slide In" class="img2" />
+  <img src="/static/images/sreenu_pic.jpg" alt="Scale Up" class="img3" />
+
+</body>
+</html>
